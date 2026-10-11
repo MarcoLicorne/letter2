@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>✦ Suivi — Nosima</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07030e;
+  --panel:#140a1e;
+  --panel2:#1c0f2a;
+  --gold:#d6aa50;
+  --gold-soft:#f0d9a0;
+  --gold-dim:rgba(214,170,80,.35);
+  --rose:#c42d5a;
+  --violet:#6a3fa0;
+  --text:#f0d9a0;
+  --muted:rgba(240,217,160,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);
+  font-family:'Cormorant Garamond',Georgia,serif}
+body{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(106,63,160,.25), transparent 45%),
+    radial-gradient(circle at 88% 92%, rgba(196,45,90,.22), transparent 45%),
+    var(--bg);
+  min-height:100vh;padding:32px 18px 60px;
+}
+.wrap{max-width:1080px;margin:0 auto}
+header{text-align:center;margin-bottom:38px;position:relative}
+header .crown{width:200px;height:auto;margin:0 auto 6px;display:block;opacity:.85}
+header h1{
+  font-family:'Homemade Apple','Cormorant Garamond',cursive;
+  font-weight:400;font-size:clamp(26px,6vw,38px);
+  color:var(--gold-soft);
+  text-shadow:0 0 22px rgba(230,180,80,.35);
+  letter-spacing:.5px;
+}
+header .sub{
+  font-style:italic;color:var(--muted);
+  font-size:clamp(14px,3.6vw,17px);
+  margin-top:6px;letter-spacing:.4px;
+}
+header .refresh{
+  position:absolute;right:0;top:0;
+  background:rgba(20,10,26,.6);
+  border:1px solid var(--gold-dim);
+  color:var(--gold-soft);border-radius:999px;
+  padding:8px 16px;font:inherit;font-style:italic;font-size:14px;
+  cursor:pointer;transition:all .25s;
+}
+header .refresh:hover{background:rgba(40,20,60,.85);border-color:var(--gold)}
+header .refresh:disabled{opacity:.5;cursor:wait}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:18px;margin-bottom:30px;
+}
+.card{
+  position:relative;
+  background:linear-gradient(160deg,var(--panel),var(--panel2));
+  border:1px solid var(--gold-dim);
+  border-radius:14px;
+  padding:22px 20px 20px;
+  box-shadow:0 12px 30px rgba(0,0,0,.55),inset 0 0 0 1px rgba(214,170,80,.08);
+  overflow:hidden;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.7),inset 0 0 0 1px rgba(214,170,80,.2)}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at top right, rgba(214,170,80,.12), transparent 60%);
+  pointer-events:none;
+}
+.card .label{
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.card .value{
+  font-size:clamp(30px,7vw,44px);
+  font-weight:600;color:var(--gold-soft);
+  line-height:1;font-variant-numeric:tabular-nums;
+  text-shadow:0 0 18px rgba(230,180,80,.35);
+}
+.card .value small{font-size:.5em;color:var(--muted);margin-left:6px;font-style:italic}
+.card .foot{
+  margin-top:8px;font-size:13px;color:var(--muted);font-style:italic;
+}
+.card.highlight .value{color:#ffdf8a}
+.card.accent{border-color:rgba(196,45,90,.4)}
+.card.accent::before{background:radial-gradient(circle at top right, rgba(196,45,90,.18), transparent 60%)}
+
+.section-title{
+  display:flex;align-items:center;gap:14px;
+  margin:38px 0 16px;
+}
+.section-title h2{
+  font-size:clamp(18px,4.5vw,22px);
+  font-weight:600;font-style:italic;
+  color:var(--gold-soft);letter-spacing:.5px;
+}
+.section-title .rule{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,var(--gold-dim),transparent);
+}
+
+.table-wrap{
+  background:linear-gradient(160deg,var(--panel),var(--panel2));
+  border:1px solid var(--gold-dim);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 12px 30px rgba(0,0,0,.55);
+}
+table{width:100%;border-collapse:collapse;font-size:15px}
+thead th{
+  text-align:left;padding:14px 16px;
+  font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--muted);font-weight:600;
+  background:rgba(0,0,0,.35);
+  border-bottom:1px solid var(--gold-dim);
+}
+tbody td{
+  padding:13px 16px;
+  border-bottom:1px solid rgba(214,170,80,.08);
+  font-variant-numeric:tabular-nums;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(214,170,80,.05)}
+td.mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13px;color:var(--muted)}
+.pill{
+  display:inline-block;padding:3px 10px;border-radius:999px;
+  font-size:12px;font-style:italic;letter-spacing:.3px;
+  border:1px solid transparent;
+}
+.pill.yes{background:rgba(80,180,110,.15);color:#8fe0a8;border-color:rgba(80,180,110,.35)}
+.pill.no{background:rgba(120,120,120,.12);color:rgba(200,200,200,.5);border-color:rgba(120,120,120,.25)}
+.pill.gold{background:rgba(214,170,80,.15);color:var(--gold-soft);border-color:var(--gold-dim)}
+
+.empty{
+  text-align:center;padding:36px 20px;color:var(--muted);font-style:italic;
+}
+.loading{
+  text-align:center;padding:60px 20px;color:var(--muted);font-style:italic;
+}
+.spinner{
+  display:inline-block;width:22px;height:22px;
+  border:2px solid var(--gold-dim);border-top-color:var(--gold);
+  border-radius:50%;animation:spin .8s linear infinite;
+  margin-right:10px;vertical-align:middle;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{
+  background:rgba(196,45,90,.12);
+  border:1px solid rgba(196,45,90,.4);
+  color:#ffb0c4;padding:18px 20px;border-radius:12px;
+  font-style:italic;margin:20px 0;
+}
+footer{
+  text-align:center;margin-top:44px;
+  color:var(--muted);font-size:13px;font-style:italic;
+}
+footer .orn{width:180px;height:14px;margin:0 auto 8px;display:block;opacity:.6}
+
+@media (max-width:520px){
+  body{padding:20px 12px 40px}
+  header .refresh{position:static;margin:14px auto 0;display:inline-block}
+  .card{padding:18px 16px}
+  thead th,tbody td{padding:11px 12px;font-size:13px}
+  td.mono{font-size:11.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="crown" viewBox="0 0 200 44" aria-hidden="true">
+      <g fill="none" stroke="#d6aa50" stroke-width="1.3" stroke-linecap="round" opacity=".9">
+        <path d="M8 30C40 30 62 22 82 26"/><path d="M82 26C86 20 92 22 90 27"/>
+        <path d="M192 30C160 30 138 22 118 26"/><path d="M118 26C114 20 108 22 110 27"/>
+      </g>
+      <path d="M84 28L88 12L94 20L100 8L106 20L112 12L116 28Z" fill="#d6aa50"/>
+      <rect x="84" y="28" width="32" height="5" fill="#d6aa50"/>
+      <circle cx="88" cy="11" r="1.8" fill="#f0d9a0"/>
+      <circle cx="100" cy="7" r="2" fill="#f0d9a0"/>
+      <circle cx="112" cy="11" r="1.8" fill="#f0d9a0"/>
+    </svg>
+    <h1>Tableau de suivi</h1>
+    <div class="sub">— Nosima · le royaume en chiffres —</div>
+    <button class="refresh" id="refresh">↻ Actualiser</button>
+  </header>
+
+  <div id="errorBox"></div>
+
+  <div id="loading" class="loading">
+    <span class="spinner"></span>Chargement des statistiques…
+  </div>
+
+  <main id="content" style="display:none">
+    <!-- Cartes principales -->
+    <div class="grid" id="mainCards"></div>
+
+    <!-- Détail par jour -->
+    <div class="section-title">
+      <h2>Activité des 30 derniers jours</h2>
+      <span class="rule"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Jour</th><th>Visites</th><th>IP uniques</th></tr>
+        </thead>
+        <tbody id="daysBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Détail par IP -->
+    <div class="section-title">
+      <h2>Détail par visiteur (IP anonymisée)</h2>
+      <span class="rule"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>IP (hash)</th>
+            <th>Visites</th>
+            <th>1<sup>re</sup> visite</th>
+            <th>Dernière</th>
+            <th>Lettre</th>
+            <th>Clé</th>
+          </tr>
+        </thead>
+        <tbody id="ipsBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <svg class="orn" viewBox="0 0 200 20" aria-hidden="true">
+      <g fill="none" stroke="#d6aa50" stroke-width="1.3" stroke-linecap="round" opacity=".8">
+        <path d="M8 10H78C86 10 88 4 96 4"/><path d="M192 10H122C114 10 112 4 104 4"/>
+        <path d="M78 10C84 16 92 16 96 11"/><path d="M122 10C116 16 108 16 104 11"/>
+      </g>
+      <path d="M100 6L106 11L100 16L94 11Z" fill="#d6aa50"/>
+    </svg>
+    Suivi du royaume — données rafraîchies à la demande
+  </footer>
+</div>
+
+<script>
+(() => {
+  const SB_URL = 'https://ewbszstwnysmrkvlmata.supabase.co/rest/v1/';
+  const SB_KEY = 'sb_publishable_o_MeinXITK-EsfEbmNmhKw_nRMYmBgI';
+
+  const $ = s => document.querySelector(s);
+  const loadingEl = $('#loading');
+  const contentEl = $('#content');
+  const errorBox = $('#errorBox');
+  const refreshBtn = $('#refresh');
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const p = n => String(n).padStart(2, '0');
+    return `${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  function fmtDay(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso + 'T00:00:00');
+    const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    return `${days[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+
+  async function sbFetch(path) {
+    const r = await fetch(SB_URL + path, {
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Accept': 'application/json'
+      }
+    });
+    if (!r.ok) {
+      const txt = await r.text().catch(() => '');
+      throw new Error(`${r.status} ${r.statusText} — ${txt.slice(0,200)}`);
+    }
+    return r.json();
+  }
+
+  function card(label, value, foot, extraClass = '') {
+    return `
+      <div class="card ${extraClass}">
+        <div class="label">${label}</div>
+        <div class="value">${value}</div>
+        ${foot ? `<div class="foot">${foot}</div>` : ''}
+      </div>`;
+  }
+
+  function pillYesNo(yes) {
+    return yes
+      ? '<span class="pill yes">✓ oui</span>'
+      : '<span class="pill no">— non</span>';
+  }
+
+  async function load() {
+    loadingEl.style.display = 'block';
+    contentEl.style.display = 'none';
+    errorBox.innerHTML = '';
+    refreshBtn.disabled = true;
+
+    try {
+      // 1) Stats globales anonymes
+      const [global] = await sbFetch('stats_anonymes?select=*');
+      if (!global) throw new Error('Aucune donnée retournée par stats_anonymes');
+
+      // 2) Visites par jour
+      const days = await sbFetch('stats_par_jour?select=*&limit=30');
+
+      // 3) IP résumées
+      const ips = await sbFetch('stats_ips_resume?select=*&limit=200');
+
+      // --- Cartes principales ---
+      const totalVisites = global.total_visites || 0;
+      const ipUniques    = global.ip_uniques || 0;
+      const jusquLettre  = global.ip_jusqu_lettre || 0;
+      const cleRangee    = global.ip_cle_rangee || 0;
+
+      const tauxLettre = ipUniques ? Math.round(jusquLettre / ipUniques * 100) : 0;
+      const tauxCle    = ipUniques ? Math.round(cleRangee  / ipUniques * 100) : 0;
+
+      $('#mainCards').innerHTML = [
+        card('Visites totales', totalVisites, `${ipUniques} IP unique${ipUniques>1?'s':''}`),
+        card('IP uniques', ipUniques,
+             `Dernières 24 h : ${global.visites_24h} · 7 j : ${global.visites_7j}`),
+        card('Ont atteint la lettre', jusquLettre,
+             `${tauxLettre}% des visiteurs`, 'highlight'),
+        card('Ont rangé la clé', cleRangee,
+             `${tauxCle}% des visiteurs`, 'accent'),
+      ].join('');
+
+      // --- Tableau par jour ---
+      const daysBody = $('#daysBody');
+      if (!days || days.length === 0) {
+        daysBody.innerHTML = '<tr><td colspan="3" class="empty">Aucune activité enregistrée.</td></tr>';
+      } else {
+        daysBody.innerHTML = days.map(d => `
+          <tr>
+            <td>${fmtDay(d.jour)}</td>
+            <td><b style="color:var(--gold-soft)">${d.visites}</b></td>
+            <td>${d.ip_uniques}</td>
+          </tr>`).join('');
+      }
+
+      // --- Tableau par IP ---
+      const ipsBody = $('#ipsBody');
+      if (!ips || ips.length === 0) {
+        ipsBody.innerHTML = '<tr><td colspan="6" class="empty">Aucun visiteur enregistré.</td></tr>';
+      } else {
+        ipsBody.innerHTML = ips.map(v => `
+          <tr>
+            <td class="mono" title="${v.ip_hash}">${String(v.ip_hash).slice(0,12)}…</td>
+            <td><b style="color:var(--gold-soft)">${v.nb_visites}</b></td>
+            <td>${fmtDate(v.premiere_visite)}</td>
+            <td>${fmtDate(v.derniere_visite)}</td>
+            <td>${pillYesNo(v.a_atteint_lettre)}</td>
+            <td>${pillYesNo(v.a_range_cle)}</td>
+          </tr>`).join('');
+      }
+
+      loadingEl.style.display = 'none';
+      contentEl.style.display = 'block';
+    } catch (e) {
+      console.error(e);
+      loadingEl.style.display = 'none';
+      errorBox.innerHTML = `
+        <div class="error">
+          <b>Erreur de chargement</b><br>
+          ${e.message}<br><br>
+          <small>Vérifie que tu as bien exécuté le SQL des vues (<code>stats_anonymes</code>,
+          <code>stats_par_jour</code>, <code>stats_ips_resume</code>) et accordé
+          <code>grant select … to anon;</code>.</small>
+        </div>`;
+    } finally {
+      refreshBtn.disabled = false;
+    }
+  }
+
+  refreshBtn.addEventListener('click', load);
+  load();
+
+  // Rafraîchissement auto toutes les 60 s (optionnel)
+  setInterval(load, 60000);
+})();
+</script>
+</body>
+</html>
