@@ -211,30 +211,30 @@ footer .orn{width:180px;height:14px;margin:0 auto 8px;display:block;opacity:.6}
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Jour</th><th>Visites</th><th>IP uniques</th></tr>
+          <tr><th>Jour</th><th>Sessions</th><th>Visiteurs uniques</th></tr>
         </thead>
         <tbody id="daysBody"></tbody>
       </table>
     </div>
 
-    <!-- Détail par IP -->
+    <!-- Détail par visiteur -->
     <div class="section-title">
-      <h2>Détail par visiteur (IP anonymisée)</h2>
+      <h2>Détail par visiteur</h2>
       <span class="rule"></span>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>IP (hash)</th>
-            <th>Visites</th>
+            <th>Visiteur</th>
+            <th>Sessions</th>
             <th>1<sup>re</sup> visite</th>
             <th>Dernière</th>
             <th>Lettre</th>
             <th>Clé</th>
           </tr>
         </thead>
-        <tbody id="ipsBody"></tbody>
+        <tbody id="visitorsBody"></tbody>
       </table>
     </div>
   </main>
@@ -313,36 +313,36 @@ footer .orn{width:180px;height:14px;margin:0 auto 8px;display:block;opacity:.6}
     refreshBtn.disabled = true;
 
     try {
-      // 1) Stats globales anonymes
-      const [global] = await sbFetch('stats_anonymes?select=*');
+      // 1) Stats globales
+      const globalRes = await sbFetch('stats_anonymes?select=*');
+      const global = Array.isArray(globalRes) ? globalRes[0] : globalRes;
       if (!global) throw new Error('Aucune donnée retournée par stats_anonymes');
 
-      // 2) Visites par jour
+      // 2) Sessions par jour
       const days = await sbFetch('stats_par_jour?select=*&limit=30');
 
-      // 3) IP résumées
-      const ips = await sbFetch('stats_ips_resume?select=*&limit=200');
+      // 3) Visiteurs résumés
+      const visitors = await sbFetch('stats_visiteurs_resume?select=*&limit=200');
 
-      // --- Cartes principales ---
-      const totalVisites = global.total_visites || 0;
-      const ipUniques    = global.ip_uniques || 0;
-      const jusquLettre  = global.ip_jusqu_lettre || 0;
-      const cleRangee    = global.ip_cle_rangee || 0;
+      const sessions  = global.total_sessions || 0;
+      const uniques   = global.visiteurs_uniques || 0;
+      const jusquLet  = global.visiteurs_jusqu_lettre || 0;
+      const cleRangee = global.visiteurs_cle_rangee || 0;
 
-      const tauxLettre = ipUniques ? Math.round(jusquLettre / ipUniques * 100) : 0;
-      const tauxCle    = ipUniques ? Math.round(cleRangee  / ipUniques * 100) : 0;
+      const tauxLet = uniques ? Math.round(jusquLet / uniques * 100) : 0;
+      const tauxCle = uniques ? Math.round(cleRangee / uniques * 100) : 0;
 
       $('#mainCards').innerHTML = [
-        card('Visites totales', totalVisites, `${ipUniques} IP unique${ipUniques>1?'s':''}`),
-        card('IP uniques', ipUniques,
-             `Dernières 24 h : ${global.visites_24h} · 7 j : ${global.visites_7j}`),
-        card('Ont atteint la lettre', jusquLettre,
-             `${tauxLettre}% des visiteurs`, 'highlight'),
+        card('Sessions totales', sessions,
+             `${uniques} visiteur${uniques>1?'s':''} unique${uniques>1?'s':''}`),
+        card('Visiteurs uniques', uniques,
+             `24 h : ${global.sessions_24h} sessions · ${global.visiteurs_24h} visiteurs`),
+        card('Ont atteint la lettre', jusquLet,
+             `${tauxLet}% des visiteurs`, 'highlight'),
         card('Ont rangé la clé', cleRangee,
              `${tauxCle}% des visiteurs`, 'accent'),
       ].join('');
 
-      // --- Tableau par jour ---
       const daysBody = $('#daysBody');
       if (!days || days.length === 0) {
         daysBody.innerHTML = '<tr><td colspan="3" class="empty">Aucune activité enregistrée.</td></tr>';
@@ -350,20 +350,19 @@ footer .orn{width:180px;height:14px;margin:0 auto 8px;display:block;opacity:.6}
         daysBody.innerHTML = days.map(d => `
           <tr>
             <td>${fmtDay(d.jour)}</td>
-            <td><b style="color:var(--gold-soft)">${d.visites}</b></td>
-            <td>${d.ip_uniques}</td>
+            <td><b style="color:var(--gold-soft)">${d.sessions}</b></td>
+            <td>${d.visiteurs_uniques}</td>
           </tr>`).join('');
       }
 
-      // --- Tableau par IP ---
-      const ipsBody = $('#ipsBody');
-      if (!ips || ips.length === 0) {
-        ipsBody.innerHTML = '<tr><td colspan="6" class="empty">Aucun visiteur enregistré.</td></tr>';
+      const visitorsBody = $('#visitorsBody');
+      if (!visitors || visitors.length === 0) {
+        visitorsBody.innerHTML = '<tr><td colspan="6" class="empty">Aucun visiteur enregistré.</td></tr>';
       } else {
-        ipsBody.innerHTML = ips.map(v => `
+        visitorsBody.innerHTML = visitors.map(v => `
           <tr>
-            <td class="mono" title="${v.ip_hash}">${String(v.ip_hash).slice(0,12)}…</td>
-            <td><b style="color:var(--gold-soft)">${v.nb_visites}</b></td>
+            <td class="mono" title="${v.visitor_id}">${String(v.visitor_id).slice(0,14)}…</td>
+            <td><b style="color:var(--gold-soft)">${v.nb_sessions}</b></td>
             <td>${fmtDate(v.premiere_visite)}</td>
             <td>${fmtDate(v.derniere_visite)}</td>
             <td>${pillYesNo(v.a_atteint_lettre)}</td>
@@ -380,9 +379,9 @@ footer .orn{width:180px;height:14px;margin:0 auto 8px;display:block;opacity:.6}
         <div class="error">
           <b>Erreur de chargement</b><br>
           ${e.message}<br><br>
-          <small>Vérifie que tu as bien exécuté le SQL des vues (<code>stats_anonymes</code>,
-          <code>stats_par_jour</code>, <code>stats_ips_resume</code>) et accordé
-          <code>grant select … to anon;</code>.</small>
+          <small>Vérifie que tu as bien exécuté le nouveau SQL
+          (<code>stats_anonymes</code>, <code>stats_par_jour</code>,
+          <code>stats_visiteurs_resume</code>) et accordé les <code>grant select</code>.</small>
         </div>`;
     } finally {
       refreshBtn.disabled = false;
@@ -391,8 +390,6 @@ footer .orn{width:180px;height:14px;margin:0 auto 8px;display:block;opacity:.6}
 
   refreshBtn.addEventListener('click', load);
   load();
-
-  // Rafraîchissement auto toutes les 60 s (optionnel)
   setInterval(load, 60000);
 })();
 </script>
